@@ -4,6 +4,9 @@ from models.user import cursor, insert_user
 from registro.register import get_user
 
 
+
+
+
 class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])
@@ -25,8 +28,20 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
         self.send_response(200)
         self.send_header('Content-type', 'text/plain')
+        # Habilitar CORS
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
         self.end_headers()
         self.wfile.write(response_message.encode('utf-8'))
+
+    def do_OPTIONS(self):
+        # Manejar las solicitudes OPTIONS para habilitar CORS
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+        self.end_headers()
 
 
 def run(server_class=http.server.HTTPServer, handler_class=SimpleHTTPRequestHandler, port=8000):
